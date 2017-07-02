@@ -84,15 +84,15 @@ function connected() {
 }
 
 function mainPublish (args, kwargs, details) {
-    console.log('mainPublish', args, kwargs, details);
+    console.log('mainPublish', args, JSON.stringify(kwargs, null, 2), details);
 }
 
 function rendererPublish (args, kwargs, details) {
-    console.log('rendererPublish', args, kwargs, details);
+    console.log('rendererPublish', args, JSON.stringify(kwargs, null, 2), details);
 }
 
 function mainCall (args, kwargs, details) {
-    console.log('mainCall', args, kwargs, details);
+    console.log('mainCall', args, JSON.stringify(kwargs, null, 2), details);
 
     let re = {
         id: "return service.deepObj",
@@ -103,7 +103,7 @@ function mainCall (args, kwargs, details) {
 }
 
 function rendererCall (args, kwargs, details) {
-    console.log('rendererCall', args, kwargs, details);
+    console.log('rendererCall', args, JSON.stringify(kwargs, null, 2), details);
 
     let re = {
         id: "return service.deepObj",
@@ -118,7 +118,7 @@ function doPublish (args, kwargs, details) {
     console.log('doPublish');
     // PUBLISH an event
     //
-    abSession.publish('test.main.subscribe', null, getDeepObj(++v)).then(
+    abSession.publish('test.main.subscribe', null, getDeepObj(++v), {acknowledge: true}).then(
         function (res) {
             console.log("published to test.main.subscribe");
         },
@@ -127,7 +127,7 @@ function doPublish (args, kwargs, details) {
         }
     );
 
-    abSession.publish('test.renderer.subscribe', null, getDeepObj(++v)).then(
+    abSession.publish('test.renderer.subscribe', null, getDeepObj(++v), {acknowledge: true}).then(
         function (res) {
             console.log("published to test.renderer.subscribe");
         },
@@ -143,7 +143,7 @@ function doCall (args, kwargs, details) {
     //
     abSession.call('test.main.register', null, getDeepObj(++v)).then(
         function (res) {
-            console.log("test.main.register called with result: ", res);
+            console.log("test.main.register called with result: ", JSON.stringify(res, null, 2));
         },
         function (err) {
             console.log("call of test.main.register failed: ", err);
@@ -152,7 +152,7 @@ function doCall (args, kwargs, details) {
 
     abSession.call('test.renderer.register', null, getDeepObj(++v)).then(
         function (res) {
-            console.log("test.renderer.register called with result: ", res);
+            console.log("test.renderer.register called with result: ", JSON.stringify(res, null, 2));
         },
         function (err) {
             console.log("call of test.renderer.register failed: ", err);
@@ -160,7 +160,7 @@ function doCall (args, kwargs, details) {
     );
 }
 
-function getDeepObj(deepValue) {
+function getDeepObj(id) {
     function getChilds(v) {
         return {
             child1: {
@@ -176,35 +176,31 @@ function getDeepObj(deepValue) {
             }
         };
     }
-    return [
-        deepValue,
-        getChilds(0),
-        {
-            more: [
-                getChilds(1),
+    return {
+        id: id,
+        more: [
+            getChilds(1),
+            [
+                getChilds(2),
                 [
-                    getChilds(2),
-                    [
-                        {
-                            deepKey:"deepValue",
-                            deepArr:
-                                [
-                                    4,
-                                    3,
-                                    "deepArrValue",
-                                    {
-                                        deepChilds: getChilds(deepValue),
-                                        val: ["val", "ue"]
-                                    }
-                                ]
-                        },
-                        getChilds(3)
-                    ],
-                    2,
-                    1
-                ]
-            ],
-            less: 0
-        }
-    ];
+                    {
+                        deepKey: "deepValue",
+                        deepArr: [
+                            4,
+                            3,
+                            "deepArrValue",
+                            {
+                                deepChilds: getChilds(id),
+                                val: ["val", "ue"]
+                            }
+                        ]
+                    },
+                    getChilds(3)
+                ],
+                2,
+                1
+            ]
+        ],
+        less: 0
+    };
 }
