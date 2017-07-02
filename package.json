@@ -1,0 +1,23 @@
+{
+    "name": "service-autobahn-test",
+    "version": "0.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon server.js",
+        "crossbar": "crossbar start",
+        "crossbar-windows": "winpty crossbar start"
+    },
+    "author": {
+        "name": "smith",
+        "email": "bill@microsoft.com",
+        "url": ""
+    },
+    "license": "MIT",
+    "dependencies": {
+        "autobahn": "^17.5.2"
+    },
+    "devDependencies": {
+        "nodemon": "*"
+    }
+}
