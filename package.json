@@ -15,7 +15,8 @@
     },
     "license": "MIT",
     "dependencies": {
-        "autobahn": "^17.5.2"
+        "autobahn": "^17.5.2",
+        "ws": "^3.3.3"
     },
     "devDependencies": {
         "nodemon": "*"
